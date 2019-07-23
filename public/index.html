@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>俺のフラッシュカード</title>
+
+  <!-- Normalize or reset CSS with your favorite library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+
+  <!-- Load paper.css for happy printing -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+  <!-- Set page size here: A5, A4 or A3 -->
+  <!-- Set also "landscape" if you need -->
+<style>
+html{
+  font-family: arial;
+}
+@media print {
+  .noprint { display: none;}
+}
+@page {
+  size: A4;
+}
+.sheet {
+}
+button {
+  font-size: 20px;
+}
+#info{
+  text-align:left;
+  width: 640px;
+  margin:auto;
+}
+#info span{
+  display: inline-block;
+  text-indent: -2em;
+  padding-left: 2em;
+}
+#input-list{
+  text-align:center;
+}
+.sheet .card {
+  width: 70mm;
+  height: 29.6mm;
+  float: left;
+  box-sizing: border-box;
+  padding: 10px 10px 10px 48px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.sheet.front .card {
+  border-top: solid 1px black;
+  border-left: solid 1px black;
+}
+.sheet .card:nth-child(-n+3) {
+  border-top: none;
+}
+.sheet .card:nth-child(3n+1) {
+  border-left: none;
+}
+
+.card p {
+  text-align: center;
+}
+
+#printinfo{
+  border: solid 2px #888;
+  height: 30px;
+  color: #888;
+  border-radius: 15px;
+  margin: 4px;
+  padding: 4px 10px;
+  font-size: 20px;
+
+}
+</style>
+</head>
+
+<!-- Set "A5", "A4" or "A3" for class name -->
+<!-- Set also "landscape" if you need -->
+<body class="A4">
+  <div id="flashcard">
+    <div v-if="mode === 'list'" id="input-list">
+     <br />
+     <h2 id="title">俺のフラッシュカード</h2>
+     使い方<br />
+     <br />
+     スプレッドシートの例<br />
+     <br />
+     <img src="images/card_sheet.png" width="480"/>
+     <br />
+     <br />
+     <div id="info">
+     <span>１．ExcelやGoogle SpreadSheetなどで、フラッシュカードのテキストを用意</span><br />
+     <span>　　※1行目は見出しのため無視されます。</span><br />
+     <span>　　※A列にカードの表の文章、B列にカードの裏の文章を入力します。</span><br />
+     <br />
+     <span>２．Ctrl+Aを押して全選択し、Ctrl+Cを押してコピーします。</span><br />
+     <br />
+     <span>３．下のテキストエリアでCtrl+Vを押してペーストし、「印刷形式に変換する」ボタンを押す。</span><br />
+     <br />
+     <span>４．A4で１枚につき30枚のカードが印刷されます。</span><br />
+     </div>
+     <br />
+     <textarea cols=80 rows=20 v-model="tsv"></textarea>
+     <br />
+     <button v-on:click="do_print">印刷形式に変換する</button>
+     <br />
+     <br />
+    </div>
+    <div v-if="mode === 'print'">
+      <section class="sheet" v-for="page in pages" v-bind:class="{front: page.mode === 'front'}">
+        <div v-bind:id="'cardbox' + card.id" class="card" v-for="card in page.cards"><p v-bind:id="'card' + card.id" v-html="card.caption"></p></div>
+      </section>
+    </div>
+  </div>
+  <script src="js/fc_maker.js"></script>
+</body>
+</html>
